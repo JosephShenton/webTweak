@@ -5,6 +5,4 @@ Tweak to Install Tweaks from the Web
 
 Go to this URL in Safari
 
-```
-webtweak://https://github.com/JosephShenton/webTweak/raw/master/webTweakTest/packages/webtweaktest.deb
-```
+<webtweak://https://github.com/JosephShenton/webTweak/raw/master/webTweakTest/packages/webtweaktest.deb>
