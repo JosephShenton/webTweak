@@ -5,6 +5,9 @@
   /Users/josephshenton/theos/vendor/include/_Prefix/IOSMacros.h \
   /Users/josephshenton/theos/vendor/include/HBLog.h \
   /Users/josephshenton/theos/vendor/include/CoreFoundation/CFLogUtilities.h \
+  /Users/josephshenton/Desktop/Desktop/Projects/Active/iOS/webTweakGIT/webtweak/Headers/LSApplicationWorkspace.h \
+  /Users/josephshenton/Desktop/Desktop/Projects/Active/iOS/webTweakGIT/webtweak/Headers/_LSAppLinkPlugIn.h \
+  /Users/josephshenton/Desktop/Desktop/Projects/Active/iOS/webTweakGIT/webtweak/Extra/NSString+webTweak.h \
   /Users/josephshenton/theos/vendor/include/substrate.h
 
 /Users/josephshenton/theos/Prefix.pch:
@@ -16,5 +19,11 @@
 /Users/josephshenton/theos/vendor/include/HBLog.h:
 
 /Users/josephshenton/theos/vendor/include/CoreFoundation/CFLogUtilities.h:
+
+/Users/josephshenton/Desktop/Desktop/Projects/Active/iOS/webTweakGIT/webtweak/Headers/LSApplicationWorkspace.h:
+
+/Users/josephshenton/Desktop/Desktop/Projects/Active/iOS/webTweakGIT/webtweak/Headers/_LSAppLinkPlugIn.h:
+
+/Users/josephshenton/Desktop/Desktop/Projects/Active/iOS/webTweakGIT/webtweak/Extra/NSString+webTweak.h:
 
 /Users/josephshenton/theos/vendor/include/substrate.h:
