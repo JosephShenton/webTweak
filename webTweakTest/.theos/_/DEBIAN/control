@@ -1,0 +1,10 @@
+Package: sh.ignition.webtweaktest
+Name: webTweak Test
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Ignition, LLC.
+Author: Ignition, LLC.
+Section: Tweaks
+Version: 0.0.1-1+debug
+Installed-Size: 152
