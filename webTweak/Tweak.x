@@ -3,126 +3,110 @@ extern char **environ;
 #define RAND_FROM_TO(min, max) (min + arc4random_uniform(max - min + 1))
 
 %hook UIApplication
-	
-	-(BOOL)openURL:(id)arg1 {
+  
+-(BOOL)openURL:(id)arg1 {
+  if ([arg1 isKindOfClass:[NSString class]] || [arg1 isKindOfClass:[NSURL class]]) { // Argument 1 is a String or URL, this is what we want.
+    if ([arg1 isKindOfClass:[NSString class]]) { // Argument 1 is a String, treat as such.
+      NSString *url = arg1;
+      if([url hasPrefix:@"webtweak://"]) { // Bingo, this means we are on the right track.
+          url = [url stringByReplacingOccurrencesOfString:@"webtweak://" withString:@""];
 
-		if ([arg1 isKindOfClass:[NSString class]] || [arg1 isKindOfClass:[NSURL class]]) { // Argument 1 is a String or URL, this is what we want.
-			
-			if ([arg1 isKindOfClass:[NSString class]]) { // Argument 1 is a String, treat as such.
+          // Download
+          NSInteger *intName = RAND_FROM_TO(100000000000, 999999999999999);
+          NSString *fileName = [@"" stringByAppendingFormat:@"%d.deb", intName]
+        NSString *filePath = @"/var/mobile/Downloads/";
+        filePath = [filePath stringByAppendingString:@"%@", fileName];
 
-				NSString *url = arg1;
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            if (error) {
+                NSLog(@"Download Error:%@",error.description);
+            }
+            if (data) {
+                [data writeToFile:filePath atomically:YES];
+                NSLog(@"File is saved to %@",filePath);
+            }
+        }];
 
-				if([url hasPrefix:@"webtweak://"]) { // Bingo, this means we are on the right track.
-				    url = [url stringByReplacingOccurrencesOfString:@"webtweak://" withString:@""];
+          // Install
+          pid_t pid;
+        char *argv[] = {
+            "dpkg",
+            "-i",
+            filePath,
+            NULL
+        };
 
-				    // Download
-				    NSInteger intName = RAND_FROM_TO(1000000000, 1548720128);
-				    NSString *fileName = [@"" stringByAppendingFormat:@"%ld.deb", (long)intName];
-					NSString *filePath = @"/var/mobile/Downloads/";
-					filePath = [filePath stringByAppendingString:fileName];
+        posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
+        waitpid(pid, NULL, 0);
 
-					NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-					[NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-					    if (error) {
-					        NSLog(@"Download Error:%@",error.description);
-					    }
-					    if (data) {
-					        [data writeToFile:filePath atomically:YES];
-					        NSLog(@"File is saved to %@",filePath);
-					    }
-					}];
+        // Respring
+        pid_t pid2;
+        char *argv2[] = {
+            "killall",
+            "-9",
+            "SpringBoard",
+            NULL
+        };
 
-				    // Install
-				    const char *filePathChar = [filePath UTF8String];
+        posix_spawn(&pid2, argv[0], NULL, NULL, argv2, environ);
+        waitpid(pid2, NULL, 0);
+      } else {
+        %orig;
+      }
 
-				    pid_t pid;
-					char *argv[] = {
-					    "dpkg",
-					    "-i",
-					    (char *)filePathChar,
-					    NULL
-					};
+    } else if ([arg1 isKindOfClass:[NSURL class]]) { // Argument 1 is a String, treat as such.
 
-					posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
-					waitpid(pid, NULL, 0);
+      NSString *url = arg1.absoluteString;
 
-					// Respring
-					pid_t pid2;
-					char *argv2[] = {
-					    "killall",
-					    "-9",
-					    "SpringBoard",
-					    NULL
-					};
+      if([url hasPrefix:@"webtweak://"]) { // Bingo, this means we are on the right track.
+          url = [url stringByReplacingOccurrencesOfString:@"webtweak://" withString:@""];
 
-					posix_spawn(&pid2, argv[0], NULL, NULL, argv2, environ);
-					waitpid(pid2, NULL, 0);
+          // Download
+          NSInteger *intName = RAND_FROM_TO(100000000000, 999999999999999);
+          NSString *fileName = [@"" stringByAppendingFormat:@"%d.deb ", intName]
+        NSString *filePath = @"/var/mobile/Downloads/";
+        filePath = [filePath stringByAppendingString:@"%@", fileName];
 
-					return YES;
-				} else {
-					return %orig;
-				}
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            if (error) {
+                NSLog(@"Download Error:%@",error.description);
+            }
+            if (data) {
+                [data writeToFile:filePath atomically:YES];
+                NSLog(@"File is saved to %@",filePath);
+            }
+        }];
 
-			} else if ([arg1 isKindOfClass:[NSURL class]]) { // Argument 1 is a String, treat as such.
+          // Install
+          pid_t pid;
+        char *argv[] = {
+            "dpkg",
+            "-i",
+            filePath,
+            NULL
+        };
 
-				NSString *url = (NSString*)arg1;
+        posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
+        waitpid(pid, NULL, 0);
 
-				if([url hasPrefix:@"webtweak://"]) { // Bingo, this means we are on the right track.
-				    url = [url stringByReplacingOccurrencesOfString:@"webtweak://" withString:@""];
+        // Respring
+        pid_t pid2;
+        char *argv2[] = {
+            "killall",
+            "-9",
+            "SpringBoard",
+            NULL
+        };
 
-				    // Download
-				    NSInteger intName = RAND_FROM_TO(1000000000, 1548720128);
-				    NSString *fileName = [@"" stringByAppendingFormat:@"%ld.deb ", (long)intName];
-					NSString *filePath = @"/var/mobile/Downloads/";
-					filePath = [filePath stringByAppendingString:fileName];
-
-					NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-					[NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-					    if (error) {
-					        NSLog(@"Download Error:%@",error.description);
-					    }
-					    if (data) {
-					        [data writeToFile:filePath atomically:YES];
-					        NSLog(@"File is saved to %@",filePath);
-					    }
-					}];
-
-				    // Install
-
-				    const char *filePathChar = [filePath UTF8String];
-
-				    pid_t pid;
-					char *argv[] = {
-					    "dpkg",
-					    "-i",
-					    (char *)filePathChar,
-					    NULL
-					};
-
-					posix_spawn(&pid, argv[0], NULL, NULL, argv, environ);
-					waitpid(pid, NULL, 0);
-
-					// Respring
-					pid_t pid2;
-					char *argv2[] = {
-					    "killall",
-					    "-9",
-					    "SpringBoard",
-					    NULL
-					};
-
-					posix_spawn(&pid2, argv[0], NULL, NULL, argv2, environ);
-					waitpid(pid2, NULL, 0);
-
-					return YES;
-				} else {
-					return %orig;
-				}
-
-			}
-
-		}
-		return %orig;
-	}
+        posix_spawn(&pid2, argv[0], NULL, NULL, argv2, environ);
+        waitpid(pid2, NULL, 0);
+      } else {
+        %orig;
+      }
+    }
+  }
+}
 
 %end
