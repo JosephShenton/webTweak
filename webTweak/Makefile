@@ -4,9 +4,8 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = webTweak
 
-$(TWEAK_NAME)_FILES = Tweak.x $(wildcard Extra/*.m)
-$(TWEAK_NAME)_CFLAGS = -fobjc-arc
-$(TWEAK_NAME)_FRAMEWORKS = CoreServices SafariServices
-# $(TWEAK_NAME)_PRIVATE_FRAMEWORKS = FrontBoard FrontBoardServices
+webTweak_FILES = Tweak.x
+webTweak_CFLAGS = -fobjc-arc
+export ARCHS = armv7 armv7s arm64 arm64e
 
 include $(THEOS_MAKE_PATH)/tweak.mk
